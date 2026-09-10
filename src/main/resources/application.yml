@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: it-services-agent
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY:}
+      chat:
+        model: ${AGENT_MODEL:gpt-4.1-mini}
+        temperature: ${AGENT_TEMPERATURE:0.0}
+
+agent:
+  max-question-length: 2000
+  session-ttl: PT30M
+  max-sessions: 1000
+  kb:
+    path: classpath:kb/
+    semantic-search-enabled: ${AGENT_SEMANTIC:true}
+    top-k: 4
+    score-threshold: 0.35
+  rate-limit:
+    enabled: true
+    requests-per-minute: 10
+  logging:
+    verbose: false
