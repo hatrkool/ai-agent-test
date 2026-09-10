@@ -67,6 +67,9 @@ configurations.getByName("integrationTestRuntimeOnly") {
 
 dependencies {
     "integrationTestImplementation"("org.springframework.boot:spring-boot-starter-test")
+    // TestRestTemplate moved out of spring-boot-test into this dedicated artifact in Boot 4 —
+    // confirmed by downloading and inspecting the jar directly, not by guessing from docs.
+    "integrationTestImplementation"("org.springframework.boot:spring-boot-resttestclient")
 }
 
 tasks.test {

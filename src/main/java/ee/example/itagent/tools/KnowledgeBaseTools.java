@@ -53,7 +53,9 @@ public class KnowledgeBaseTools {
                 .toList();
     }
 
-    @Tool(name = "getDocument", description = "Tagastab ühe teadmusbaasi dokumendi sisu failinime järgi.")
+    @Tool(name = "getDocument", description = "Tagastab ühe teadmusbaasi dokumendi sisu failinime järgi. "
+            + "KOHUSTUSLIK kasutada uuesti ka siis, kui pead kinnitama, tsiteerima või osutama allikale, "
+            + "mida oled samas vestluses juba maininud — varasem vestlusmälu ei asenda seda kutset.")
     public DocumentResult getDocument(
             @ToolParam(description = "Teadmusbaasi faili nimi, nt gitlab-access.md") String fileName) {
         KnowledgeDocument doc = loader.documentsByFile().get(fileName);
