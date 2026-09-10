@@ -33,6 +33,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.ai:spring-ai-starter-model-openai")
     implementation("org.springframework.ai:spring-ai-vector-store")
+    implementation("com.bucket4j:bucket4j_jdk17-core:8.19.0")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     // Boot 4 split test-slice annotations (@WebMvcTest etc.) out of spring-boot-test-autoconfigure.
