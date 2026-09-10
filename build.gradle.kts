@@ -1,5 +1,6 @@
 plugins {
     java
+    checkstyle
     id("org.springframework.boot") version "4.1.1"
     id("io.spring.dependency-management") version "1.1.7"
 }
@@ -16,6 +17,13 @@ java {
 
 repositories {
     mavenCentral()
+}
+
+checkstyle {
+    toolVersion = "10.20.2"
+    configFile = file("config/checkstyle/checkstyle.xml")
+    maxWarnings = 0
+    isIgnoreFailures = false
 }
 
 extra["springAiVersion"] = "2.0.1"

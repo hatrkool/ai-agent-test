@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+    "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
+    "https://checkstyle.org/dtds/configuration_1_3.dtd">
+
+<!--
+  Deliberately lean: no Javadoc-required checks (this project defaults to no
+  comments — see CLAUDE.md), no import-order enforcement. Focused on real
+  defects (unused imports, empty catch blocks, missing braces) and
+  consistency (line length, brace placement) rather than house style.
+-->
+<module name="Checker">
+    <property name="charset" value="UTF-8"/>
+    <property name="severity" value="error"/>
+    <property name="fileExtensions" value="java"/>
+
+    <module name="LineLength">
+        <property name="max" value="120"/>
+        <property name="ignorePattern" value="^import\s.*$"/>
+    </module>
+    <module name="FileTabCharacter"/>
+    <module name="NewlineAtEndOfFile"/>
+
+    <module name="TreeWalker">
+        <module name="UnusedImports"/>
+        <module name="RedundantImport"/>
+        <module name="AvoidStarImport"/>
+        <module name="OneTopLevelClass"/>
+
+        <module name="EmptyBlock">
+            <property name="option" value="text"/>
+            <property name="tokens" value="LITERAL_TRY, LITERAL_FINALLY, LITERAL_IF, LITERAL_ELSE,
+                LITERAL_SWITCH, LITERAL_WHILE, LITERAL_FOR, LITERAL_DO, INSTANCE_INIT, STATIC_INIT"/>
+        </module>
+        <module name="EmptyCatchBlock">
+            <property name="commentFormat" value="expected"/>
+        </module>
+        <module name="EqualsHashCode"/>
+        <module name="NeedBraces"/>
+        <module name="LeftCurly"/>
+        <module name="RightCurly"/>
+
+        <module name="ModifierOrder"/>
+        <module name="RedundantModifier"/>
+        <module name="SimplifyBooleanExpression"/>
+        <module name="SimplifyBooleanReturn"/>
+
+        <module name="EmptyLineSeparator">
+            <property name="allowNoEmptyLineBetweenFields" value="true"/>
+            <property name="allowMultipleEmptyLines" value="false"/>
+        </module>
+        <module name="WhitespaceAround"/>
+        <module name="MethodParamPad"/>
+        <module name="NoWhitespaceBefore"/>
+    </module>
+</module>
