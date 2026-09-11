@@ -211,6 +211,14 @@ on: the `RetrievalLedger` is the ground truth of what the tools actually
 returned this request, and `OutputGuard` checks every source and excerpt
 against it after the model runs, independent of what the model claims.
 
+**Unexpected failures never break the response contract.** `ApiExceptionHandler`
+has a catch-all handler for anything `AgentService`/`ChatClient` throws — an
+OpenAI outage, a timeout, or a structured-output response the converter
+still can't parse — returning `503` with a generic `ApiError` body
+(`{"error": "service_unavailable", ...}`) instead of letting exception
+detail reach the client. Without this, an upstream failure would surface as
+a raw Spring error response with a shape no other path in this API produces.
+
 **Logging** (`SafeLogging`) never writes full question text at INFO or
 above — only `sessionId`, a SHA-256 prefix of the question, its length,
 and matched pattern *labels*. Full-text logging exists only at DEBUG,
@@ -285,7 +293,7 @@ all 21/21 green each run.
 | SEC-07 | 3000-char input → 400, model never called | `AgentControllerApiTest.sec07_overlongQuestion_returns400BeforeAnyModelCall` |
 | DATA-01 | isikukood in question → redacted, request continues | `SensitiveDataScrubberTest.data01_isikukoodInQuestion_isRedactedAndRequestContinues` |
 | DATA-02 | API key / password in question → refused, model never called | `SensitiveDataScrubberTest.data02_apiKeyInQuestion_refusesBeforeAnyModelCall`, `data02_passwordDisclosure_refuses` |
-| DATA-03 | KB doc with a fake isikukood → boot fails | covered in `KnowledgeBaseLoader` startup-scan tests |
+| DATA-03 | KB doc with a fake isikukood → boot fails, names file/detector not value | `KnowledgeBaseLoaderTest.data03_kbDocumentContainingIsikukood_failsStartupNamingFileAndDetectorNotValue` |
 | UC-01 | direct question resolves to `gitlab-access.md` | `KnowledgeBaseIndexTest.uc01_directQuestion_topHitIsGitlabAccess` (unit, lexical), `UseCaseIntegrationTest.uc01_directQuestion_returnsGitlabSourceWithCitation` (live) |
 | UC-02 | inflected short query resolves to `gitlab-access.md` | `KnowledgeBaseIndexTest.uc02_shortInflectedQuery_topHitIsGitlabAccess`, `UseCaseIntegrationTest.uc02_shortInflectedQuery_resolvesToGitlabSource` |
 | UC-03 | different topic resolves to `kubernetes-deploy.md`, not GitLab | `KnowledgeBaseIndexTest.uc03_kubernetesQuestion_topHitIsKubernetesDeploy_notGitlab`, `UseCaseIntegrationTest.uc03_differentTopic_resolvesToKubernetesNotGitlab` |
@@ -310,6 +318,8 @@ all 21/21 green each run.
 | — | `OutputGuard`'s 5 checks | `OutputGuardTest` |
 | — | rate limiter, 11th request/min → 429 | `RateLimitFilterTest` |
 | — | injection pattern coverage (~15 parameterised cases) | `InputGuardTest` |
+| — | unexpected `AgentService` failure → 503, no exception detail leaked | `AgentControllerApiTest.agentServiceThrows_returns503WithGenericApiErrorNeverLeakingExceptionDetail` |
+| — | session TTL expiry and max-sessions LRU eviction | `SessionMemoryConfigTest` |
 
 (SEC-07 above only in the unit suite by design — see plan §10.)
 

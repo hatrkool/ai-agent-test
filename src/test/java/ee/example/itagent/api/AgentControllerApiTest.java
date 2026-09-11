@@ -1,10 +1,13 @@
 package ee.example.itagent.api;
 
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.not;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -70,6 +73,20 @@ class AgentControllerApiTest {
                 .andExpect(status().isBadRequest());
 
         verifyNoInteractions(agentService);
+    }
+
+    @Test
+    void agentServiceThrows_returns503WithGenericApiErrorNeverLeakingExceptionDetail() throws Exception {
+        when(agentService.answer(any(), any())).thenThrow(new RuntimeException("OpenAI timeout: sk-abc123"));
+
+        mockMvc.perform(post("/api/v1/agent/ask")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"question": "Kuidas saada GitLabi ligipääsu?"}
+                                """))
+                .andExpect(status().isServiceUnavailable())
+                .andExpect(jsonPath("$.error").value("service_unavailable"))
+                .andExpect(content().string(not(containsString("sk-abc123"))));
     }
 
     @Test
