@@ -30,7 +30,7 @@ public final class InjectionPatterns {
             named("kaitu_nagu", "käitu nagu"),
             named("susteem_koolon", "süsteem\\s*:"),
             named("avalda_prompt", "ava(lda)?.*prompt"),
-            named("korda_sona_sonalt", "korda.*sõna-sõnalt"),
+            named("korda_sona_sonalt", "korda.*sõna-?sõnalt"),
             named("path_traversal", "\\.\\./"),
             named("etc_path", "/etc/"));
 
